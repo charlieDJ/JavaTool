@@ -1,0 +1,59 @@
+<idea-plugin>
+    <id>org.example.action</id>
+    <name>JavaTool</name>
+    <vendor email="278016981@qq.com" url="https://www.yuque.com/zhexuezhili">博客地址</vendor>
+
+    <description><![CDATA[
+    <h2>JavaTool</h2>
+        <p>这是我的第一个插件，名字叫做JavaTool。</p><br>
+        <p>我希望用工具完成重复的工作。</p><br>
+        <p>远离脱发，远离脱发，远离脱发。</p><br>
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <applicationConfigurable
+                parentId="tools"
+                instance="org.example.extension.TranslatorSettingConfiguration"
+                id="org.example.TranslatorSettingConfiguration"
+                displayName="Translator"/>
+        <applicationService serviceImplementation="org.example.extension.TranslatorSetting"/>
+        <projectService serviceImplementation="org.example.extension.TranslatorCache"/>
+        <toolWindow id="Translator" anchor="right" factoryClass="org.example.extension.TranslatorToolsWindow2"/>
+        <toolWindow id="Tool" anchor="right" factoryClass="org.example.extension.CommonToolWindowFactory"/>
+
+    </extensions>
+    <projectListeners>
+        <listener class="org.example.listener.InitTranslatorWindowListener"
+                  topic="com.intellij.openapi.wm.ex.ToolWindowManagerListener"/>
+    </projectListeners>
+
+
+    <actions>
+        <action id="translator" class="org.example.action.TranslatorAction" description="英翻中" text="翻译">
+            <!-- 绑定快捷键，此处也可以选择不绑定。 -->
+            <keyboard-shortcut first-keystroke="control 9" keymap="$default"/>
+            <!-- 添加到鼠标右键菜单中 -->
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
+        <!-- Add your actions here -->
+        <action id="genSwagger" class="org.example.action.GenerateSwaggerDocAction" description="生成swagger字段注解" text="生成swagger注解">
+            <!-- 添加到鼠标右键菜单中 -->
+            <add-to-group group-id="EditorPopupMenu" anchor="first" />
+        </action>
+<!--        <action id="hint" class="org.example.action.HintNotification" description="hint" text="提示">-->
+<!--            &lt;!&ndash; 添加到鼠标右键菜单中 &ndash;&gt;-->
+<!--            <add-to-group group-id="EditorPopupMenu" />-->
+<!--        </action>-->
+        <action id="gen" class="org.example.action.GenerateJdbcTemplateCodeAction" description="生成JdbcTemplate查询模板代码" text="生成模板代码">
+            <!-- 添加到鼠标右键菜单中 -->
+            <add-to-group group-id="EditorPopupMenu" anchor="first" />
+        </action>
+
+    </actions>
+    <idea-version since-build="2019.3"/>
+</idea-plugin>
