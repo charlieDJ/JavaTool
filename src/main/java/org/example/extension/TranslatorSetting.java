@@ -17,6 +17,22 @@ public class TranslatorSetting implements PersistentStateComponent<TranslatorSet
         return ApplicationManager.getApplication().getService(TranslatorSetting.class);
     }
 
+    public String getAppID() {
+        return appID;
+    }
+
+    public void setAppID(String appID) {
+        this.appID = appID;
+    }
+
+    public String getSecurityKey() {
+        return securityKey;
+    }
+
+    public void setSecurityKey(String securityKey) {
+        this.securityKey = securityKey;
+    }
+
     @Override
     public @Nullable TranslatorSetting getState() {
         return this;

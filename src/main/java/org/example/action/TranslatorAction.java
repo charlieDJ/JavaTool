@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
 import org.apache.commons.lang3.StringUtils;
 import org.example.extension.TranslatorCache;
+import org.example.extension.TranslatorSetting;
 import org.example.extension.TranslatorToolsWindow2;
 import org.example.util.TranslatorUtils;
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +19,11 @@ import java.util.Map;
 public class TranslatorAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        if (TranslatorUtils.appid == null || TranslatorUtils.securityKey == null) {
-            Notifications.Bus.notify(new Notification("Translator", "小天才翻译机", "请先设置appID，securityKey", NotificationType.ERROR), e.getProject());
+        TranslatorSetting setting = TranslatorSetting.getInstance();
+        String appId = setting.getAppID();
+        String securityKey = setting.getSecurityKey();
+        if (appId == null || securityKey == null) {
+            Notifications.Bus.notify(new Notification("Translator", "小天才翻译机", "请先设置appID，securityKey。\nSettings->Tools->Translator", NotificationType.ERROR), e.getProject());
             return;
         }
         Editor editor = e.getData(CommonDataKeys.EDITOR);

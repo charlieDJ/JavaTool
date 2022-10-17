@@ -55,8 +55,9 @@ public class TranslatorSettingConfiguration implements Configurable {
     public void apply() throws ConfigurationException {
         //TranslatorUtils.appid = appID.getText();
         //TranslatorUtils.securityKey = securityKey.getText();
-        TranslatorSetting.getInstance().appID = appID.getText();
-        TranslatorSetting.getInstance().securityKey = securityKey.getText();
+        TranslatorSetting setting = TranslatorSetting.getInstance();
+        setting.setAppID(appID.getText());
+        setting.setSecurityKey(securityKey.getText());
     }
 
 
