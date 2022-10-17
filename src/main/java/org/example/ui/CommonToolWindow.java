@@ -1,6 +1,7 @@
 package org.example.ui;
 
 import org.example.listener.ConvertToFieldListener;
+import org.example.listener.FormatJsonListener;
 
 import javax.swing.*;
 
@@ -12,9 +13,46 @@ public class CommonToolWindow {
     private JPanel Jpanel;
     private JButton convert;
     private JTextArea codeArea;
+    private JPanel formatJson;
+    private JTextArea jsonArea;
+    private JTextArea formattedJsonArea;
+    private JButton convertJson;
 
     public CommonToolWindow() {
         convert.addActionListener(new ConvertToFieldListener(this));
+        convertJson.addActionListener(new FormatJsonListener(this));
+    }
+
+    public JPanel getFormatJson() {
+        return formatJson;
+    }
+
+    public void setFormatJson(JPanel formatJson) {
+        this.formatJson = formatJson;
+    }
+
+    public JTextArea getJsonArea() {
+        return jsonArea;
+    }
+
+    public void setJsonArea(JTextArea jsonArea) {
+        this.jsonArea = jsonArea;
+    }
+
+    public JTextArea getFormattedJsonArea() {
+        return formattedJsonArea;
+    }
+
+    public void setFormattedJsonArea(JTextArea formattedJsonArea) {
+        this.formattedJsonArea = formattedJsonArea;
+    }
+
+    public JButton getConvertJson() {
+        return convertJson;
+    }
+
+    public void setConvertJson(JButton convertJson) {
+        this.convertJson = convertJson;
     }
 
     public JPanel getMainPanel() {
