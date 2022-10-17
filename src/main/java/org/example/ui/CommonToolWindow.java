@@ -1,6 +1,6 @@
 package org.example.ui;
 
-import org.example.listener.ConvertButtonActionListener;
+import org.example.listener.ConvertToFieldListener;
 
 import javax.swing.*;
 
@@ -14,7 +14,7 @@ public class CommonToolWindow {
     private JTextArea codeArea;
 
     public CommonToolWindow() {
-        convert.addActionListener(new ConvertButtonActionListener(this));
+        convert.addActionListener(new ConvertToFieldListener(this));
     }
 
     public JPanel getMainPanel() {

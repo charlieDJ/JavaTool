@@ -6,11 +6,11 @@ import org.example.util.ConvertUtils;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class ConvertButtonActionListener extends AbstractAction {
+public class ConvertToFieldListener extends AbstractAction {
 
     private final CommonToolWindow window;
 
-    public ConvertButtonActionListener(CommonToolWindow window) {
+    public ConvertToFieldListener(CommonToolWindow window) {
         this.window = window;
     }
 
