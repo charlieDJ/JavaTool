@@ -2,6 +2,7 @@ package org.example.action;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
@@ -9,8 +10,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.util.PsiUtilBase;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.example.dialog.PopUpDialog;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,17 +33,24 @@ public class GenerateJdbcTemplateCodeAction extends AnAction {
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
         Document document = editor.getDocument();
         String text = editor.getSelectionModel().getSelectedText();
+        int caretOffset = editor.getCaretModel().getOffset();
         // 查找当前光标停留在的元素
-        PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(editor, project);
-        PsiMethod selectMethod = getSelectedMethod(text, psiFile);
-        if (Objects.isNull(selectMethod)) {
-            new PopUpDialog(project, "请选中方法").show();
+//        PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(editor, project);
+        PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
+        if (psiFile == null) {
             return;
         }
-        String generic = getReturnTypeGeneric(selectMethod);
-        List<String> lines = getCodeLines(selectMethod, generic);
-        // 光标所在的行，取光标所在行的下一行
-        int lineOffset = document.getLineNumber(editor.getCaretModel().getOffset()) + 1;
+        PsiMethod selectedMethod = getSelectedMethod(text, psiFile);
+//        PsiMethod selectedMethod = (PsiMethod) psiFile.findElementAt(caretOffset);
+        if (Objects.isNull(selectedMethod)) {
+            new PopUpDialog(project, "请选中方法名称").show();
+            return;
+        }
+        String generic = getReturnTypeGeneric(selectedMethod);
+        List<String> lines = getCodeLines(selectedMethod, generic);
+        // 插入符号在文档的偏移量，取插入符号所在行的下一行
+        int lineOffset = document.getLineNumber(caretOffset) + 1;
+        // 偏移开始值
         int lineStartOffset = document.getLineStartOffset(lineOffset);
         String finalText = String.join("\n", lines);
         // 开始位置+文本长度=结束位置
@@ -60,10 +67,7 @@ public class GenerateJdbcTemplateCodeAction extends AnAction {
 
     @NotNull
     private List<String> getCodeLines(PsiMethod selectMethod, String generic) {
-        String genericClass = "";
-        if (StringUtils.isNotEmpty(generic)) {
-            genericClass = generic + ".class";
-        }
+        String genericClass = generic + ".class";
         List<String> lines = new ArrayList<>();
         lines.add("MapSqlParameterSource source = new MapSqlParameterSource();");
         List<String> criteriaList = new ArrayList<>();
@@ -82,7 +86,7 @@ public class GenerateJdbcTemplateCodeAction extends AnAction {
                 .collect(Collectors.joining(" and "));
         String sql = String.format("String sql = \"select * from  where %s \";", buildCriteria);
         lines.add(sql);
-        lines.add(String.format("List<%s> list = jdbcTemplate.query(sql, source, BeanPropertyRowMapper.newInstance(%s));\n", generic, genericClass));
+        lines.add(String.format("return jdbcTemplate.query(sql, source, BeanPropertyRowMapper.newInstance(%s));\n", genericClass));
         return lines;
     }
 
@@ -92,32 +96,32 @@ public class GenerateJdbcTemplateCodeAction extends AnAction {
         PsiClassType type = (PsiClassType) selectMethod.getReturnType();
         if (Objects.nonNull(type)) {
             PsiType[] parameters = type.getParameters();
-            if (parameters.length > 0) {
-                PsiClassType parameter = (PsiClassType) parameters[0];
-                generic = parameter.getName();
+            if (type.getParameterCount() == 0) {
+                // 没有泛型
+                return type.getName();
             }
+            // 取出泛型
+            PsiClassType parameter = (PsiClassType) parameters[0];
+            generic = parameter.getName();
         }
         return generic;
     }
 
     @Nullable
     private PsiMethod getSelectedMethod(String text, PsiFile psiFile) {
-        PsiMethod selectMethod = null;
-        for (PsiElement psiElement : psiFile.getChildren()) {
-            if (!(psiElement instanceof PsiClass)) {
-                continue;
-            }
-            // PsiClass需要在gradle引入，plugins = ['com.intellij.java']
-            // PsiClass相当于Java中的Class对象
-            PsiClass psiClass = (PsiClass) psiElement;
-            PsiMethod[] methods = psiClass.getMethods();
-            for (PsiMethod method : methods) {
-                if (method.getName().equals(text)) {
-                    selectMethod = method;
-                    break;
+        List<PsiMethod> psiMethods = new ArrayList<>();
+        // 自顶向下，递归查找数据
+        psiFile.accept(new JavaRecursiveElementVisitor() {
+            @Override
+            public void visitMethod(PsiMethod method) {
+                if(method.getName().equals(text)){
+                    psiMethods.add(method);
                 }
             }
+        });
+        if (CollectionUtils.isEmpty(psiMethods)) {
+            return null;
         }
-        return selectMethod;
+        return psiMethods.get(0);
     }
 }

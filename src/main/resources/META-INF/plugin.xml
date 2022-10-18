@@ -34,7 +34,7 @@
 
 
     <actions>
-        <action id="translator" class="org.example.action.TranslatorAction" description="英翻中" text="翻译">
+        <action id="translator" class="org.example.action.TranslatorAction" description="英翻中" text="选词翻译">
             <!-- 绑定快捷键，此处也可以选择不绑定。 -->
             <keyboard-shortcut first-keystroke="control 9" keymap="$default"/>
             <!-- 添加到鼠标右键菜单中 -->
@@ -49,7 +49,7 @@
 <!--            &lt;!&ndash; 添加到鼠标右键菜单中 &ndash;&gt;-->
 <!--            <add-to-group group-id="EditorPopupMenu" />-->
 <!--        </action>-->
-        <action id="gen" class="org.example.action.GenerateJdbcTemplateCodeAction" description="生成JdbcTemplate查询模板代码" text="生成模板代码">
+        <action id="genJDBC" class="org.example.action.GenerateJdbcTemplateCodeAction" description="生成JdbcTemplate查询模板代码" text="生成JDBC模板代码">
             <!-- 添加到鼠标右键菜单中 -->
             <add-to-group group-id="EditorPopupMenu" anchor="first" />
         </action>

@@ -38,7 +38,9 @@ public class GenerateSwaggerDocAction extends AnAction {
         if (Objects.isNull(editor) || Objects.isNull(project)) {
             return;
         }
-        // 查找当前光标停留在的元素
+        //PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
+        //PsiJavaFile javaFile = (PsiJavaFile) psiFile;
+        // 查找当前光标停留的元素
         PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(editor, project);
         if (Objects.isNull(psiFile)) {
             return;
