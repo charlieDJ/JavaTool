@@ -17,6 +17,11 @@ public class CommonToolWindow {
     private JTextArea jsonArea;
     private JTextArea formattedJsonArea;
     private JButton convertJson;
+    private JPanel examplePanel;
+    private JTextField exampleText;
+    private JLabel example;
+    private JLabel hint;
+    private JFormattedTextField hintText;
 
     public CommonToolWindow() {
         convert.addActionListener(new ConvertToFieldListener(this));
