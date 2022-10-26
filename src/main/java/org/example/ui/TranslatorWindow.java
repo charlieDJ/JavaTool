@@ -11,7 +11,6 @@ public class TranslatorWindow {
     private JPanel notePanel;
     private JPanel translatorPanel;
     private JTable noteTable;
-    private JComboBox comboBox2;
     private JButton translateButton;
     private JComboBox comboBox1;
     private JTextArea originalTextArea;
@@ -19,13 +18,9 @@ public class TranslatorWindow {
 
 
     public TranslatorWindow() {
-
         // 下拉框添加下拉选项
-        comboBox1.addItem("英文");
-        comboBox1.addItem("中文");
-        comboBox2.addItem("中文");
-        comboBox2.addItem("英文");
-
+        comboBox1.addItem("中翻英");
+        comboBox1.addItem("英翻中");
         // 备忘录表格属性设置
         String[] header = {"原文", "译文"};
         DefaultTableModel tableModel = new DefaultTableModel(null, header);
@@ -72,14 +67,6 @@ public class TranslatorWindow {
 
     public void setNoteTable(JTable noteTable) {
         this.noteTable = noteTable;
-    }
-
-    public JComboBox getComboBox2() {
-        return comboBox2;
-    }
-
-    public void setComboBox2(JComboBox comboBox2) {
-        this.comboBox2 = comboBox2;
     }
 
     public JButton getTranslateButton() {

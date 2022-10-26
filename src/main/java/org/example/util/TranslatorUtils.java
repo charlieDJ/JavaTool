@@ -10,21 +10,27 @@ import java.util.Map;
 
 public class TranslatorUtils {
     private final static String transAPIHost = "http://api.fanyi.baidu.com/api/trans/vip/translate";
-    // 翻译 API 的配置修改为来自持久化对象的值
-    public static String appid = TranslatorSetting.getInstance().appID;
-    public static String securityKey = TranslatorSetting.getInstance().securityKey;
 
-    public static String getTransResult(String query, String from, String to) {
+    public static TransResp getTransResult(String query, String from, String to) {
         Map<String, String> params = buildParams(query, from, to);
         String resp = HttpUtils.get(transAPIHost, params);
         TransResp transResp = JSON.parseObject(resp, TransResp.class);
-        if (transResp.getTransResult() == null || transResp.getTransResult().size() == 0) {
-            return "";
+        if (transResp == null) {
+            transResp = new TransResp();
+            transResp.setMessage("请求翻译服务器失败");
+            return transResp;
         }
-        return transResp.getTransResult().get(0).getDst();
+        if (transResp.getTransResult() == null || transResp.getTransResult().size() == 0) {
+            return transResp;
+        }
+        transResp.setSuccess(true);
+        return transResp;
+//        return transResp.getTransResult().get(0).getDst();
     }
 
     private static Map<String, String> buildParams(String query, String from, String to) {
+        String appid = TranslatorSetting.getInstance().appID;
+        String securityKey = TranslatorSetting.getInstance().securityKey;
         Map<String, String> params = new HashMap<String, String>();
         params.put("q", query);
         params.put("from", from);
@@ -45,6 +51,24 @@ public class TranslatorUtils {
         private String to;
         @JsonProperty("trans_result")
         private List<TransResult> transResult;
+        private String message;
+        private boolean success = false;
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public void setSuccess(boolean success) {
+            this.success = success;
+        }
 
         public void setFrom(String from) {
             this.from = from;

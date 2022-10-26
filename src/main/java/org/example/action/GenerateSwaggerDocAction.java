@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
  * @date 2022/10/16
  */
 public class GenerateSwaggerDocAction extends AnAction {
+
+    private static final Logger logger = Logger.getInstance(GenerateSwaggerDocAction.class);
 
     private static String SWAGGER_FIELD_ANNO = "@ApiModelProperty(value = \"%s\", required = false, example = \"\") ";
     private static String SWAGGER_CLASS_ANNO = "@ApiModel(\"%s\")";
@@ -67,11 +70,11 @@ public class GenerateSwaggerDocAction extends AnAction {
             return;
         }
         PsiDocComment docComment = psiClass.getDocComment();
-        String comment = getComment(docComment,true);
+        String comment = getComment(docComment, true);
         if (StringUtils.isEmpty(comment)) {
             return;
         }
-        createAnnotation(SWAGGER_CLASS_ANNO, comment +" "+ psiClass.getName(), psiClass, e);
+        createAnnotation(SWAGGER_CLASS_ANNO, comment + " " + psiClass.getName(), psiClass, e);
     }
 
     private void createAnnotation(String anno, String comment, PsiElement element, AnActionEvent e) {
@@ -100,6 +103,7 @@ public class GenerateSwaggerDocAction extends AnAction {
         int endOffset = lastChild.getTextOffset();
         // 增加空格解决代码无法被格式化的问题
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
+        PsiDocumentManager.getInstance(e.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument());
         editor.getDocument().insertString(endOffset, " ");
         codeStyleManager.reformatText(element.getContainingFile(), startOffset, endOffset + 1);
     }
@@ -116,15 +120,13 @@ public class GenerateSwaggerDocAction extends AnAction {
     private void genFieldSwaggerAnnotation(AnActionEvent e, PsiField[] fields) {
         for (PsiField field : fields) {
             PsiAnnotation[] annotations = field.getAnnotations();
+            logger.warn("field: " + field.getName());
             // 如果有swagger注解，直接返回。用于更新swagger注解场景
             if (isAnnotationExist(annotations, SWAGGER_FIELD_ANNO)) {
                 continue;
             }
             PsiDocComment comment = field.getDocComment();
-            String finalComment = getComment(comment,false);
-            if (StringUtils.isEmpty(finalComment)) {
-                return;
-            }
+            String finalComment = getComment(comment, false);
             createAnnotation(SWAGGER_FIELD_ANNO, finalComment, field, e);
         }
     }
@@ -147,20 +149,22 @@ public class GenerateSwaggerDocAction extends AnAction {
     }
 
     private boolean isAnnotationExist(PsiAnnotation[] annotations, String annotationFullName) {
-        boolean exist = false;
         for (PsiAnnotation annotation : annotations) {
             String qualifiedName = annotation.getQualifiedName();
             if (StringUtils.isEmpty(qualifiedName)) {
                 continue;
             }
+            logger.warn("qualifiedName = " + qualifiedName);
             String annotationName = qualifiedName;
             if (qualifiedName.contains(".")) {
-                annotationName = qualifiedName.substring(qualifiedName.lastIndexOf("."));
+                annotationName = qualifiedName.substring(qualifiedName.lastIndexOf(".") + 1);
+                logger.warn("annotationName = " + annotationName);
             }
             if (annotationFullName.contains(annotationName)) {
-                exist = true;
+                logger.warn("annotationName exist = " + true);
+                return true;
             }
         }
-        return exist;
+        return false;
     }
 }

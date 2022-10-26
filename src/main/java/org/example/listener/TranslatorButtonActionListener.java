@@ -1,6 +1,6 @@
 package org.example.listener;
 
-import org.apache.commons.lang3.StringUtils;
+import org.example.extension.TranslatorSetting;
 import org.example.ui.TranslatorWindow;
 import org.example.util.TranslatorUtils;
 
@@ -23,15 +23,24 @@ public class TranslatorButtonActionListener extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        String appid = TranslatorSetting.getInstance().appID;
+        String securityKey = TranslatorSetting.getInstance().securityKey;
+        if (appid == null || securityKey == null) {
+            window.getTranslateTextArea().setText("请先设置appID，securityKey。\nSettings->Tools->Translator");
+            return;
+        }
         // 获取原语言文本、原语言、和目标翻译语言
         String originalText = window.getOriginalTextArea().getText();
-        String fromLang = langMap.get((String) window.getComboBox1().getSelectedItem());
-        String toLang = langMap.get((String) window.getComboBox2().getSelectedItem());
-        // 翻译后，将文本设置到翻译结果文本输入框
-        String result = TranslatorUtils.getTransResult(originalText, fromLang, toLang);
-        if(StringUtils.isEmpty(result)){
-            result = "翻译出错";
+        String comboBox = (String) window.getComboBox1().getSelectedItem();
+        TranslatorUtils.TransResp transResult = null;
+        if ("中翻英".equals(comboBox)) {
+            transResult = TranslatorUtils.getTransResult(originalText, "zh", "en");
+        } else {
+            transResult = TranslatorUtils.getTransResult(originalText, "en", "zh");
         }
-        window.getTranslateTextArea().setText(result);
+        // 翻译后，将文本设置到翻译结果文本输入框
+        if (transResult.isSuccess()) {
+            window.getTranslateTextArea().setText(transResult.getTransResult().get(0).getDst());
+        }
     }
 }

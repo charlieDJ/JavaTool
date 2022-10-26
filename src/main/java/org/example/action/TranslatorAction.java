@@ -7,7 +7,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
-import org.apache.commons.lang3.StringUtils;
 import org.example.extension.TranslatorCache;
 import org.example.extension.TranslatorSetting;
 import org.example.extension.TranslatorToolsWindow2;
@@ -35,12 +34,14 @@ public class TranslatorAction extends AnAction {
         if (transCache.containsKey(text)) {
             transResult = transCache.get(text);
         } else {
-            transResult = TranslatorUtils.getTransResult(text, "auto", "zh");
-            if (StringUtils.isNotEmpty(transResult)) {
-                transCache.put(text, transResult);
-                TranslatorToolsWindow2.addNote(text, transResult);
+            TranslatorUtils.TransResp transResp = TranslatorUtils.getTransResult(text, "auto", "zh");
+            if (transResp.isSuccess()) {
+                String dst = transResp.getTransResult().get(0).getDst();
+                transCache.put(text, dst);
+                TranslatorToolsWindow2.addNote(text, dst);
+                transResult = dst;
             } else {
-                transResult = "翻译出错";
+                transResult = transResp.getMessage();
             }
         }
         Notifications.Bus.notify(new Notification("Translator", "小天才翻译机", transResult, NotificationType.INFORMATION), e.getProject());
