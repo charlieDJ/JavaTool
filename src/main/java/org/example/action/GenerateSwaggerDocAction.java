@@ -66,18 +66,13 @@ public class GenerateSwaggerDocAction extends AnAction {
 
     private void genClassModelSwaggerAnnotation(AnActionEvent e, PsiClass psiClass) {
         PsiAnnotation[] annotations = psiClass.getAnnotations();
-        if (isAnnotationExist(annotations, SWAGGER_CLASS_ANNO)) {
-            return;
-        }
+        PsiAnnotation psiAnnotation = existAnnotation(annotations, SWAGGER_CLASS_ANNO);
         PsiDocComment docComment = psiClass.getDocComment();
         String comment = getComment(docComment, true);
-        if (StringUtils.isEmpty(comment)) {
-            return;
-        }
-        createAnnotation(SWAGGER_CLASS_ANNO, comment + " " + psiClass.getName(), psiClass, e);
+        createAnnotation(SWAGGER_CLASS_ANNO, comment + " " + psiClass.getName(), psiClass, psiAnnotation, e);
     }
 
-    private void createAnnotation(String anno, String comment, PsiElement element, AnActionEvent e) {
+    private void createAnnotation(String anno, String comment, PsiElement element, PsiAnnotation psiAnnotation, AnActionEvent e) {
         Project project = e.getProject();
         PsiElementFactory factory = PsiElementFactory.getInstance(project);
         PsiAnnotation annotation = factory.createAnnotationFromText(String.format(anno, comment), element);
@@ -87,7 +82,11 @@ public class GenerateSwaggerDocAction extends AnAction {
             return;
         }
         WriteCommandAction.runWriteCommandAction(project, () -> {
-            element.getNode().addChild(annotation.getNode(), modifierElement.getNode());
+            if (psiAnnotation == null) {
+                element.getNode().addChild(annotation.getNode(), modifierElement.getNode());
+            } else {
+                psiAnnotation.replace(annotation);
+            }
             format(element, e);
         });
     }
@@ -121,13 +120,10 @@ public class GenerateSwaggerDocAction extends AnAction {
         for (PsiField field : fields) {
             PsiAnnotation[] annotations = field.getAnnotations();
             logger.warn("field: " + field.getName());
-            // 如果有swagger注解，直接返回。用于更新swagger注解场景
-            if (isAnnotationExist(annotations, SWAGGER_FIELD_ANNO)) {
-                continue;
-            }
+            PsiAnnotation psiAnnotation = existAnnotation(annotations, SWAGGER_FIELD_ANNO);
             PsiDocComment comment = field.getDocComment();
             String finalComment = getComment(comment, false);
-            createAnnotation(SWAGGER_FIELD_ANNO, finalComment, field, e);
+            createAnnotation(SWAGGER_FIELD_ANNO, finalComment, field, psiAnnotation, e);
         }
     }
 
@@ -149,6 +145,11 @@ public class GenerateSwaggerDocAction extends AnAction {
     }
 
     private boolean isAnnotationExist(PsiAnnotation[] annotations, String annotationFullName) {
+        PsiAnnotation psiAnnotation = existAnnotation(annotations, annotationFullName);
+        return psiAnnotation != null;
+    }
+
+    private PsiAnnotation existAnnotation(PsiAnnotation[] annotations, String annotationFullName) {
         for (PsiAnnotation annotation : annotations) {
             String qualifiedName = annotation.getQualifiedName();
             if (StringUtils.isEmpty(qualifiedName)) {
@@ -162,9 +163,9 @@ public class GenerateSwaggerDocAction extends AnAction {
             }
             if (annotationFullName.contains(annotationName)) {
                 logger.warn("annotationName exist = " + true);
-                return true;
+                return annotation;
             }
         }
-        return false;
+        return null;
     }
 }
