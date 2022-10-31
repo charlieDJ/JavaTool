@@ -2,6 +2,7 @@ package org.example.ui;
 
 import org.example.listener.ConvertToFieldListener;
 import org.example.listener.FormatJsonListener;
+import org.example.util.ClipBoardUtils;
 
 import javax.swing.*;
 
@@ -22,10 +23,14 @@ public class CommonToolWindow {
     private JLabel example;
     private JLabel hint;
     private JFormattedTextField hintText;
+    private JButton copyButton;
+    private JButton copyFieldButton;
 
     public CommonToolWindow() {
         convert.addActionListener(new ConvertToFieldListener(this));
         convertJson.addActionListener(new FormatJsonListener(this));
+        copyButton.addActionListener(actionEvent -> ClipBoardUtils.setContent(formattedJsonArea.getText()));
+        copyFieldButton.addActionListener(actionEvent -> ClipBoardUtils.setContent(codeArea.getText()));
     }
 
     public JPanel getFormatJson() {
@@ -114,5 +119,53 @@ public class CommonToolWindow {
 
     public void setCodeArea(JTextArea codeArea) {
         this.codeArea = codeArea;
+    }
+
+    public JPanel getExamplePanel() {
+        return examplePanel;
+    }
+
+    public void setExamplePanel(JPanel examplePanel) {
+        this.examplePanel = examplePanel;
+    }
+
+    public JTextField getExampleText() {
+        return exampleText;
+    }
+
+    public void setExampleText(JTextField exampleText) {
+        this.exampleText = exampleText;
+    }
+
+    public JLabel getExample() {
+        return example;
+    }
+
+    public void setExample(JLabel example) {
+        this.example = example;
+    }
+
+    public JLabel getHint() {
+        return hint;
+    }
+
+    public void setHint(JLabel hint) {
+        this.hint = hint;
+    }
+
+    public JFormattedTextField getHintText() {
+        return hintText;
+    }
+
+    public void setHintText(JFormattedTextField hintText) {
+        this.hintText = hintText;
+    }
+
+    public JButton getCopyButton() {
+        return copyButton;
+    }
+
+    public void setCopyButton(JButton copyButton) {
+        this.copyButton = copyButton;
     }
 }

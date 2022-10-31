@@ -13,13 +13,11 @@ import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.util.PsiUtilBase;
 import org.apache.commons.lang3.StringUtils;
 import org.example.util.PsiClassUtils;
+import org.example.util.PsiDocUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * 生成Swagger文档
@@ -68,7 +66,7 @@ public class GenerateSwaggerDocAction extends AnAction {
         PsiAnnotation[] annotations = psiClass.getAnnotations();
         PsiAnnotation psiAnnotation = existAnnotation(annotations, SWAGGER_CLASS_ANNO);
         PsiDocComment docComment = psiClass.getDocComment();
-        String comment = getComment(docComment, true);
+        String comment = PsiDocUtils.getComment(docComment, true);
         createAnnotation(SWAGGER_CLASS_ANNO, comment + " " + psiClass.getName(), psiClass, psiAnnotation, e);
     }
 
@@ -122,30 +120,13 @@ public class GenerateSwaggerDocAction extends AnAction {
             logger.warn("field: " + field.getName());
             PsiAnnotation psiAnnotation = existAnnotation(annotations, SWAGGER_FIELD_ANNO);
             PsiDocComment comment = field.getDocComment();
-            String finalComment = getComment(comment, false);
+            String finalComment = PsiDocUtils.getComment(comment, false);
             // 注解存在，但注释为空，不更新
             if (psiAnnotation != null && StringUtils.isEmpty(finalComment)) {
                 continue;
             }
             createAnnotation(SWAGGER_FIELD_ANNO, finalComment, field, psiAnnotation, e);
         }
-    }
-
-    private String getComment(PsiDocComment comment, boolean isClass) {
-        if (Objects.isNull(comment) || StringUtils.isEmpty(comment.getText())) {
-            return "";
-        }
-        List<String> commentItems = new ArrayList<>();
-        for (PsiElement child : comment.getChildren()) {
-            String source = child.getText().replaceAll("[/* \n]+", StringUtils.EMPTY);
-            if (isClass && child.getText().contains("@")) {
-                continue;
-            }
-            commentItems.add(source);
-        }
-        return commentItems.stream()
-                .filter(StringUtils::isNoneEmpty)
-                .collect(Collectors.joining("。"));
     }
 
     private boolean isAnnotationExist(PsiAnnotation[] annotations, String annotationFullName) {

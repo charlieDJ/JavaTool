@@ -1,6 +1,7 @@
 package org.example.ui;
 
 import org.example.listener.TranslatorButtonActionListener;
+import org.example.util.ClipBoardUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -15,6 +16,7 @@ public class TranslatorWindow {
     private JComboBox comboBox1;
     private JTextArea originalTextArea;
     private JTextArea translateTextArea;
+    private JButton copyButton;
 
 
     public TranslatorWindow() {
@@ -27,6 +29,9 @@ public class TranslatorWindow {
         noteTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
         noteTable.setModel(tableModel);
         translateButton.addActionListener(new TranslatorButtonActionListener(this));
+        copyButton.addActionListener(actionEvent -> {
+            ClipBoardUtils.setContent(translateTextArea.getText());
+        });
     }
 
     public JPanel getMainPanel() {
@@ -99,5 +104,13 @@ public class TranslatorWindow {
 
     public void setTranslateTextArea(JTextArea translateTextArea) {
         this.translateTextArea = translateTextArea;
+    }
+
+    public JButton getCopyButton() {
+        return copyButton;
+    }
+
+    public void setCopyButton(JButton copyButton) {
+        this.copyButton = copyButton;
     }
 }

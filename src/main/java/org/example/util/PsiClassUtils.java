@@ -7,6 +7,9 @@ import com.intellij.psi.PsiFile;
 public class PsiClassUtils {
 
     public static PsiClass getPsiClass(PsiFile psiFile){
+        if (psiFile == null) {
+            return null;
+        }
         for (PsiElement psiElement : psiFile.getChildren()) {
             if (!(psiElement instanceof PsiClass)) {
                 continue;

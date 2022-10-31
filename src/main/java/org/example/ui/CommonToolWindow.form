@@ -87,16 +87,19 @@
                       <text value="转换"/>
                     </properties>
                   </component>
-                  <hspacer id="7eb8a">
-                    <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                  </hspacer>
                   <vspacer id="df5e0">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
+                  <component id="4a9d3" class="javax.swing.JButton" binding="copyFieldButton">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="复制"/>
+                    </properties>
+                  </component>
                 </children>
               </grid>
               <grid id="f0338" binding="examplePanel" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="true" hgap="-1" vgap="-1">
@@ -223,16 +226,19 @@
                       <text value="转换"/>
                     </properties>
                   </component>
-                  <hspacer id="77462">
-                    <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                  </hspacer>
                   <vspacer id="72ebd">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
+                  <component id="8f977" class="javax.swing.JButton" binding="copyButton">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="复制"/>
+                    </properties>
+                  </component>
                 </children>
               </grid>
             </children>
