@@ -123,6 +123,10 @@ public class GenerateSwaggerDocAction extends AnAction {
             PsiAnnotation psiAnnotation = existAnnotation(annotations, SWAGGER_FIELD_ANNO);
             PsiDocComment comment = field.getDocComment();
             String finalComment = getComment(comment, false);
+            // 注解存在，但注释为空，不更新
+            if (psiAnnotation != null && StringUtils.isEmpty(finalComment)) {
+                continue;
+            }
             createAnnotation(SWAGGER_FIELD_ANNO, finalComment, field, psiAnnotation, e);
         }
     }
