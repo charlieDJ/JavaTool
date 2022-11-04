@@ -168,4 +168,13 @@ public class CommonToolWindow {
     public void setCopyButton(JButton copyButton) {
         this.copyButton = copyButton;
     }
+
+    public JButton getCopyFieldButton() {
+        return copyFieldButton;
+    }
+
+    public void setCopyFieldButton(JButton copyFieldButton) {
+        this.copyFieldButton = copyFieldButton;
+    }
+
 }

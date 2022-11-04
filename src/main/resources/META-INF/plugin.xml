@@ -25,6 +25,7 @@
         <projectService serviceImplementation="org.example.extension.TranslatorCache"/>
         <toolWindow id="Translator" anchor="right" factoryClass="org.example.extension.TranslatorToolsWindow2"/>
         <toolWindow id="Tool" anchor="right" factoryClass="org.example.extension.CommonToolWindowFactory"/>
+        <toolWindow id="Demo" anchor="right" factoryClass="org.example.extension.DemoWindowFactory"/>
 
     </extensions>
     <projectListeners>
@@ -57,6 +58,11 @@
             <!-- 添加到鼠标右键菜单中 -->
             <add-to-group group-id="JavaGenerateGroup1" anchor="before" relative-to-action="GenerateEquals" />
         </action>
+        <action id="genTableField" class="org.example.action.GenerateTableFieldAction" description="生成表格" text="生成表格">
+            <!-- 添加到鼠标右键菜单中 -->
+            <add-to-group group-id="JavaGenerateGroup1" anchor="before" relative-to-action="GenerateEquals" />
+        </action>
+
 
     </actions>
     <idea-version since-build="2019.3"/>

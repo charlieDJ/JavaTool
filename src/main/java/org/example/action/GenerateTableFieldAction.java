@@ -9,31 +9,31 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.javadoc.PsiDocComment;
-import org.apache.commons.lang3.StringUtils;
 import org.example.dialog.CustomDialog;
 import org.example.util.PsiClassUtils;
 import org.example.util.PsiDocUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 生成DrawIo的类图代码
+ * 生成数据库表数据
  */
-public class GenerateDrawIoClassAction extends AnAction {
+public class GenerateTableFieldAction extends AnAction {
 
     private static Map<String,String> typeMap;
 
     static {
         typeMap = new HashMap<>();
-        typeMap.put("java.lang.String", "varchar");
+        typeMap.put("java.lang.String", "VARCHAR2");
         typeMap.put("java.util.Date", "Date");
         typeMap.put("java.lang.boolean", "boolean");
         typeMap.put("java.lang.Integer", "int");
     }
 
 
-    public static final String FIELD_FORMAT = "-%s%s: %s";
+    public static final String FIELD_FORMAT = "%d\t%s\t%s\t%s\t%s\t%s";
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
@@ -44,10 +44,9 @@ public class GenerateDrawIoClassAction extends AnAction {
             return;
         }
         List<String> lines = new ArrayList<>();
-        String className = psiClass.getName();
         PsiField[] fields = psiClass.getFields();
-        lines.add(className);
-        lines.add(String.format(FIELD_FORMAT, "id", surroundByBracket("主键"), "varchar"));
+        AtomicInteger integer = new AtomicInteger(1);
+        lines.add(String.format(FIELD_FORMAT, integer.getAndIncrement(),"主键", "id", "VARCHAR2", "255", "唯一编号"));
         for (PsiField field : fields) {
             String fieldName = field.getName();
             PsiType type = field.getType();
@@ -55,20 +54,11 @@ public class GenerateDrawIoClassAction extends AnAction {
             canonicalText = typeMap.getOrDefault(canonicalText, canonicalText);
             PsiDocComment docComment = field.getDocComment();
             String comment = PsiDocUtils.getComment(docComment, false);
-            String fieldText;
-            if (StringUtils.isNotEmpty(comment)) {
-                fieldText = String.format(FIELD_FORMAT, fieldName, surroundByBracket(comment), canonicalText);
-            } else {
-                fieldText = String.format(FIELD_FORMAT, fieldName, "", canonicalText);
-            }
+            String fieldText = String.format(FIELD_FORMAT, integer.getAndIncrement(),comment, fieldName, canonicalText, "255", "");
             lines.add(fieldText);
         }
         String classText = String.join("\n", lines);
-        CustomDialog customDialog = new CustomDialog(project, classText);
-        customDialog.show();
-    }
-
-    private String surroundByBracket(String text){
-        return "(".concat(text).concat(")");
+        CustomDialog dialog = new CustomDialog(project, classText);
+        dialog.show();
     }
 }

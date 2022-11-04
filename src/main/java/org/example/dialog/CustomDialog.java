@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class CustomDrawIoDialog extends DialogWrapper {
+public class CustomDialog extends DialogWrapper {
 
     JTextArea textArea;
 
@@ -20,7 +20,7 @@ public class CustomDrawIoDialog extends DialogWrapper {
         this.textArea = textArea;
     }
 
-    public CustomDrawIoDialog(@Nullable Project project, String text) {
+    public CustomDialog(@Nullable Project project, String text) {
         super(project);
         setOKButtonText("复制并确定");
         setCancelButtonText("取消");
