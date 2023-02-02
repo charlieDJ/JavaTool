@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
+import org.apache.commons.lang3.StringUtils;
 import org.example.extension.TranslatorCache;
 import org.example.extension.TranslatorSetting;
 import org.example.extension.TranslatorToolsWindow2;
@@ -21,7 +22,7 @@ public class TranslatorAction extends AnAction {
         TranslatorSetting setting = TranslatorSetting.getInstance();
         String appId = setting.getAppID();
         String securityKey = setting.getSecurityKey();
-        if (appId == null || securityKey == null) {
+        if (StringUtils.isEmpty(appId) ||  StringUtils.isEmpty(securityKey)) {
             Notifications.Bus.notify(new Notification("Translator", "小天才翻译机", "请先设置appID，securityKey。\nSettings->Tools->Translator", NotificationType.ERROR), e.getProject());
             return;
         }

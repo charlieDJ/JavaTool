@@ -1,40 +1,17 @@
 package org.example.extension;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.ui.JBColor;
+import org.example.ui.TranslatorSettingsView;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.util.Objects;
 
 public class TranslatorSettingConfiguration implements Configurable {
-    private final JComponent component;
-    private final JTextField appID;
-    private final JTextField securityKey;
-    private final static String appIDHint = "请输入appID";
-    private final static String securityKeyHint = "请输入securityKey";
 
-    public TranslatorSettingConfiguration() {
-        this.component = new JPanel();
-        this.component.setLayout(new GridLayout(15, 1));
-
-        // 创建appID、securityKey文本框
-        this.appID = new JTextField();
-        this.securityKey = new JTextField();
-
-        //设置输入框提示语
-        this.appID.setText(appIDHint);
-        this.appID.setForeground(JBColor.GRAY);
-        this.appID.addFocusListener(new TextFieldListener(this.appID, appIDHint));
-        this.securityKey.setText(securityKeyHint);
-        this.securityKey.setForeground(JBColor.GRAY);
-        this.securityKey.addFocusListener(new TextFieldListener(this.securityKey, securityKeyHint));
-        this.component.add(this.appID);
-        this.component.add(this.securityKey);
-    }
+    private TranslatorSettingsView view = new TranslatorSettingsView();
+    private TranslatorSetting setting = ServiceManager.getService(TranslatorSetting.class).getState();
 
     @Override
     public String getDisplayName() {
@@ -43,51 +20,24 @@ public class TranslatorSettingConfiguration implements Configurable {
 
     @Override
     public @Nullable JComponent createComponent() {
-        return component;
+        return view.getComponent();
     }
 
     @Override
     public boolean isModified() {
-        return true;
+        if (!Objects.equals(setting.getAppID(), view.getAppId().getText())) {
+            return true;
+        }
+        if (!Objects.equals(setting.getSecurityKey(), view.getSecretKey().getText())) {
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void apply() throws ConfigurationException {
-        //TranslatorUtils.appid = appID.getText();
-        //TranslatorUtils.securityKey = securityKey.getText();
-        TranslatorSetting setting = TranslatorSetting.getInstance();
-        setting.setAppID(appID.getText());
-        setting.setSecurityKey(securityKey.getText());
-    }
-
-
-    static class TextFieldListener implements FocusListener {
-
-        private final String defaultHint;
-        private final JTextField textField;
-
-        public TextFieldListener(JTextField textField, String defaultHint) {
-            this.defaultHint = defaultHint;
-            this.textField = textField;
-        }
-
-        @Override
-        public void focusGained(FocusEvent e) {
-            // 清空提示语，设置为黑色字体
-            if (textField.getText().equals(defaultHint)) {
-                textField.setText("");
-                textField.setForeground(JBColor.BLACK);
-            }
-        }
-
-        @Override
-        public void focusLost(FocusEvent e) {
-            // 如果内容为空，设置提示语
-            if (textField.getText().equals("")) {
-                textField.setText(defaultHint);
-                textField.setForeground(JBColor.GRAY);
-            }
-        }
+    public void apply() {
+        setting.setAppID(view.getAppId().getText());
+        setting.setSecurityKey(view.getSecretKey().getText());
     }
 
 }

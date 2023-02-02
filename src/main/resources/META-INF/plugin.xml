@@ -54,14 +54,14 @@
             <!-- 添加到鼠标右键菜单中 -->
             <add-to-group group-id="EditorPopupMenu" anchor="first" />
         </action>
-        <action id="genDrawIoClass" class="org.example.action.GenerateDrawIoClassAction" description="生成DrawIo的类图代码" text="生成DrawIo类">
-            <!-- 添加到鼠标右键菜单中 -->
-            <add-to-group group-id="JavaGenerateGroup1" anchor="before" relative-to-action="GenerateEquals" />
-        </action>
-        <action id="genTableField" class="org.example.action.GenerateTableFieldAction" description="生成表格" text="生成表格">
-            <!-- 添加到鼠标右键菜单中 -->
-            <add-to-group group-id="JavaGenerateGroup1" anchor="before" relative-to-action="GenerateEquals" />
-        </action>
+<!--        <action id="genDrawIoClass" class="org.example.action.GenerateDrawIoClassAction" description="生成DrawIo的类图代码" text="生成DrawIo类">-->
+<!--            &lt;!&ndash; 添加到鼠标右键菜单中 &ndash;&gt;-->
+<!--            <add-to-group group-id="JavaGenerateGroup1" anchor="before" relative-to-action="GenerateEquals" />-->
+<!--        </action>-->
+<!--        <action id="genTableField" class="org.example.action.GenerateTableFieldAction" description="生成表格" text="生成表格">-->
+<!--            &lt;!&ndash; 添加到鼠标右键菜单中 &ndash;&gt;-->
+<!--            <add-to-group group-id="JavaGenerateGroup1" anchor="before" relative-to-action="GenerateEquals" />-->
+<!--        </action>-->
 
 
     </actions>
