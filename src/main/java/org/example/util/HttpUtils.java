@@ -8,7 +8,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -65,7 +64,7 @@ public class HttpUtils {
         return null;
     }
 
-    public static String getUrlWithQueryString(String url, Map<String, String> params) {
+    public static String getUrlWithQueryString(String url, Map<String, String> params) throws UnsupportedEncodingException {
         if (params == null) {
             return url;
         }
@@ -114,12 +113,12 @@ public class HttpUtils {
      * @param input 原文
      * @return URL编码. 如果编码失败, 则返回原文
      */
-    public static String encode(String input) {
+    public static String encode(String input) throws UnsupportedEncodingException {
         if (input == null) {
             return "";
         }
 
-        return URLEncoder.encode(input, StandardCharsets.UTF_8);
+        return URLEncoder.encode(input, "utf-8");
     }
 
     private static final TrustManager myX509TrustManager = new X509TrustManager() {

@@ -1,6 +1,16 @@
+buildscript {
+    repositories {
+        maven { url "https://maven.aliyun.com/repository/public" }
+        maven { url "https://repo.huaweicloud.com/repository/maven" }
+        mavenCentral()
+        maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
+    }
+}
+
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '1.6.0'
+    id 'org.jetbrains.intellij' version '0.7.3'
 }
 
 group 'org.example'
@@ -11,12 +21,29 @@ repositories {
     mavenCentral()
 }
 
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
 dependencies {
     implementation group: 'com.alibaba', name: 'fastjson', version: '2.0.4'
+    implementation group: 'com.github.adedayo.intellij.sdk', name: 'java-psi-api', version: '142.1'
 }
 
-// See https://github.com/JetBrains/gradle-intellij-plugin/
+patchPluginXml {
+    changeNotes = """
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>"""
+    sinceBuild ='201'
+    untilBuild=''
+}
+
 intellij {
-    version = '2019.3.5'
+    // gradle 6.8-6.9
+    version = "2020.1"
+    type = "IC"
     plugins = ['com.intellij.java']
+//    updateSinceUntilBuild = false
+//    downloadSources = true
 }

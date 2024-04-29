@@ -65,5 +65,5 @@
 
 
     </actions>
-    <idea-version since-build="2019.3"/>
+    <idea-version since-build="201" />
 </idea-plugin>
