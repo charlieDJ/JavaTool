@@ -26,9 +26,9 @@ targetCompatibility = JavaVersion.VERSION_1_8
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 
+
 dependencies {
     implementation group: 'com.alibaba', name: 'fastjson', version: '2.0.4'
-    implementation group: 'com.github.adedayo.intellij.sdk', name: 'java-psi-api', version: '142.1'
 }
 
 patchPluginXml {
@@ -40,10 +40,8 @@ patchPluginXml {
 }
 
 intellij {
-    // gradle 6.8-6.9
+    // gradle 6.8-6.9, jdk1.8, idea 2019.3
     version = "2020.1"
     type = "IC"
     plugins = ['com.intellij.java']
-//    updateSinceUntilBuild = false
-//    downloadSources = true
 }

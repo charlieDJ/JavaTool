@@ -5,15 +5,15 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import org.apache.commons.collections.CollectionUtils;
+import com.intellij.psi.impl.source.PsiJavaFileImpl;
 import org.example.dialog.PopUpDialog;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
  * @date 2022/10/16
  */
 public class GenerateJdbcTemplateCodeAction extends AnAction {
+
+    private static final Logger LOG = Logger.getInstance(GenerateJdbcTemplateCodeAction.class);
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
@@ -40,7 +42,7 @@ public class GenerateJdbcTemplateCodeAction extends AnAction {
         if (psiFile == null) {
             return;
         }
-        PsiMethod selectedMethod = getSelectedMethod(text, psiFile);
+        PsiMethod selectedMethod = findMethodByName(psiFile,text );
 //        PsiMethod selectedMethod = (PsiMethod) psiFile.findElementAt(caretOffset);
         if (Objects.isNull(selectedMethod)) {
             new PopUpDialog(project, "请选中方法名称").show();
@@ -107,21 +109,39 @@ public class GenerateJdbcTemplateCodeAction extends AnAction {
         return generic;
     }
 
-    @Nullable
-    private PsiMethod getSelectedMethod(String text, PsiFile psiFile) {
-        List<PsiMethod> psiMethods = new ArrayList<>();
-        // 自顶向下，递归查找数据
-        psiFile.accept(new JavaRecursiveElementVisitor() {
-            @Override
-            public void visitMethod(PsiMethod method) {
-                if(method.getName().equals(text)){
-                    psiMethods.add(method);
+//    @Nullable
+//    private PsiMethod getSelectedMethod(String text, PsiFile psiFile) {
+//        List<PsiMethod> psiMethods = new ArrayList<>();
+//        // 自顶向下，递归查找数据
+//        psiFile.accept(new JavaRecursiveElementVisitor() {
+//            @Override
+//            public void visitMethod(PsiMethod method) {
+//                if(method.getName().equals(text)){
+//                    psiMethods.add(method);
+//                }
+//            }
+//        });
+//        if (CollectionUtils.isEmpty(psiMethods)) {
+//            return null;
+//        }
+//        return psiMethods.get(0);
+//    }
+
+    public PsiMethod findMethodByName(PsiFile psiFile, String methodName) {
+        if (psiFile instanceof PsiJavaFileImpl) {
+            PsiJavaFile psiJavaFile = (PsiJavaFileImpl) psiFile;
+            // 获取文件中所有的类
+            for (PsiClass psiClass : psiJavaFile.getClasses()) {
+                // 遍历类中的所有方法
+                for (PsiMethod psiMethod : psiClass.getMethods()) {
+                    if (psiMethod.getName().equals(methodName)) {
+                        return psiMethod;  // 找到匹配的方法，返回它
+                    }
                 }
             }
-        });
-        if (CollectionUtils.isEmpty(psiMethods)) {
-            return null;
+        }else{
+            System.out.println("psiFile.getClass().getName() = " + psiFile.getClass().getName());
         }
-        return psiMethods.get(0);
+        return null;  // 如果没有找到，返回 null
     }
 }
